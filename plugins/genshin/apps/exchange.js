@@ -68,7 +68,7 @@ export class exchange extends plugin {
       index: `https://api-takumi.mihoyo.com/event/bbslive/index?act_id=${this.actId}`,
       mi18n: `https://webstatic.mihoyo.com/admin/mi18n/bbs_cn/${this.mi18n}/${this.mi18n}-zh-cn.json`,
       code: `https://webstatic.mihoyo.com/bbslive/code/${this.actId}.json?version=1&time=${this.now}`,
-      actId: 'https://bbs-api.mihoyo.com/post/wapi/getPostFullInCollection?collection_id=1280130&gids=2&order_type=2'
+      actId: "https://bbs-api.mihoyo.com/painter/api/user_instant/list?offset=0&size=20&uid=75276550",
     }
 
     let response
@@ -87,16 +87,51 @@ export class exchange extends plugin {
     return res
   }
 
-  async getActId () {
+  // async getActId () {
+  //   let ret = await this.getData('actId')
+  //   if (!ret || ret.retcode !== 0) return false
+
+  //   let post = lodash.map(ret.data.posts, 'post')
+  //   post = lodash.maxBy(post, 'created_at')
+  //   let actId = post.content.replace(/\[链接\]|\[图片\]/g, '').trim()
+  //   if (!actId) return false
+
+  //   return actId
+  // }
+  
+  async getActId() {
+    // 获取 "act_id"
     let ret = await this.getData('actId')
-    if (!ret || ret.retcode !== 0) return false
-
-    let post = lodash.map(ret.data.posts, 'post')
-    post = lodash.maxBy(post, 'created_at')
-    let actId = post.content.replace(/\[链接\]|\[图片\]/g, '').trim()
-    if (!actId) return false
-
-    return actId
+    if (ret.error || ret.retcode !== 0) {
+      return "";
+    }
+  
+    let actId = "";
+    let keywords = ["来看《原神》", "版本前瞻特别节目"];
+    for (const p of ret.data.list) {
+      const post = p.post.post;
+      if (!post) {
+        continue;
+      }
+      if (!keywords.every((word) => post.subject.includes(word))) {
+        continue;
+      }
+      let shit = JSON.parse(post.structured_content);
+      for (let segment of shit) {
+        if (segment.insert.toString().includes('观看直播') && segment.attributes.link) {
+          let matched = segment.attributes.link.match(/act_id=(\d{8}ys\d{4})/);
+          if (matched) {
+            actId = matched[1];
+          }
+        }
+      }
+     
+      if (actId) {
+        break;
+      }
+    }
+  
+    return actId;
   }
   async useCode(){
     let cdkCode = this.e.message[0].text.split(/#(兑换码使用|cdk-u) /, 3)[2];
