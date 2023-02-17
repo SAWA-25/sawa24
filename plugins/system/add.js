@@ -176,6 +176,8 @@ export class add extends plugin {
     let msg = lodash.keyBy(this.e.message, 'type')
     if (!this.e.msg || !msg.image) return false
 
+    // #全局添加文字+表情包，无法正确添加到全局路径
+    this.e.isGlobal = this.isGlobal;
     let keyWord = this.e.msg.replace(/#|＃|图片|表情|添加|全局/g, '').trim()
     if (!keyWord) return false
 
