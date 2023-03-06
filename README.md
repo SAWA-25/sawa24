@@ -10,7 +10,7 @@
 
 1.克隆项目
 ```
-git clone --depth=1 -b main https://github.com/Le-niao/Yunzai-Bot.git
+git clone --depth=1 -b main https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git
 ```
 ```
 cd Yunzai-Bot #进入Yunzai目录
