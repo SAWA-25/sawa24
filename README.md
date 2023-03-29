@@ -3,7 +3,7 @@
 
 项目仅供学习交流使用，严禁用于任何商业用途和非法行为
 
-[目前功能](https://github.com/Le-niao/Yunzai-Bot/tree/main/plugins/genshin)
+[目前功能](https://gitee.com/yoimiya-kokomi/Yunzai-Bot/tree/main/plugins/genshin)
 
 ## 使用方法
 >环境准备： Windows or Linux，Node.js（[版本至少v16以上](http://nodejs.cn/download/)），[Redis](https://redis.io/docs/getting-started/installation/)
@@ -26,6 +26,55 @@ pnpm install -P
 4.运行（首次运行按提示输入登录）
 ```
 node app
+```
+
+## Le佬版迁移教程
+1. 执行(为了切换到喵喵的云崽)
+
+```
+git remote set-url origin https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git && git checkout main && git pull
+```
+
+2. 执行(为了重置到最新的更新)
+
+```
+git reset --hard origin/main
+```
+
+3. 执行(为了升级依赖，同时修复部分迁移用户因pm2问题无法重启与后台运行)
+
+```
+pnpm update
+```
+
+```
+pnpm install -P
+```
+
+```
+pnpm install pm2 -g
+```
+
+```
+pm2 update
+```
+
+4. 执行
+
+```
+node ./node_modules/puppeteer/install.js
+```
+
+5. 运行（首次运行按提示输入登录）
+
+```
+node app
+```
+
+6. 登陆后后台运行（先按ctrl+c终止机器人运行，然后输入)
+
+```
+pnpm run start
 ```
 
 ## 致谢
