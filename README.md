@@ -28,6 +28,55 @@ pnpm install -P
 node app
 ```
 
+## Le佬版迁移教程
+1. 执行(为了切换到喵喵的云崽)
+
+```
+git remote set-url origin https://gitee.com/yoimiya-kokomi/Yunzai-Bot.git && git checkout main && git pull
+```
+
+2. 执行(为了重置到最新的更新)
+
+```
+git reset --hard origin/main
+```
+
+3. 执行(为了升级依赖，同时修复部分迁移用户因pm2问题无法重启与后台运行)
+
+```
+pnpm update
+```
+
+```
+pnpm install -P
+```
+
+```
+pnpm install pm2 -g
+```
+
+```
+pm2 update
+```
+
+4. 执行
+
+```
+node ./node_modules/puppeteer/install.js
+```
+
+5. 运行（首次运行按提示输入登录）
+
+```
+node app
+```
+
+6. 登陆后后台运行
+
+```
+pnpm run start
+```
+
 ## 致谢
 | Nickname                                                     | Contribution                        |
 | :----------------------------------------------------------: | ----------------------------------- |
