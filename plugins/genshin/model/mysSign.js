@@ -275,6 +275,7 @@ export default class MysSign extends base {
     let invalidNum = 0
     let verifyNum = 0
     let contiNum = 0
+    let failSignCount = 5
 
     for (let i in uids) {
       this.ckNum = Number(i) + 1
@@ -305,9 +306,14 @@ export default class MysSign extends base {
           failNum++
         }
       }
-      if (contiNum >= 5) {
-        break
+
+      if (this.cfg.failSignCountCfg > 0) {
+        failSignCount = this.cfg.failSignCountCfg
+        if (contiNum >= failSignCount) {
+          break
+        }
       }
+
       if (this.signApi) {
         await common.sleep(6.1 * 1000)
         this.signApi = false
@@ -318,8 +324,11 @@ export default class MysSign extends base {
     if (invalidNum > 0) {
       msg += `\n失效：${invalidNum}个`
     }
-    if (contiNum >= 5) {
-      msg += '\n\n验证码失败次数过多，已停止任务'
+
+    if (this.cfg.failSignCountCfg > 0) {
+      if (contiNum >= failSignCount) {
+        msg += '\n\n签到失败次数过多，已停止自动签到任务'
+      }
     }
 
     if (manual) {
