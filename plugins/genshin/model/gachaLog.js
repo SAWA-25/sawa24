@@ -720,17 +720,17 @@ export default class GachaLog extends base {
     switch (String(uid)[0]) {
       case '1':
       case '2':
-        return 'cn_gf01' // 官服
+        return this.e.isSr?'prod_gf_cn':'cn_gf01' // 官服
       case '5':
-        return 'cn_qd01' // B服
+        return this.e.isSr?'prod_qd_cn':'cn_qd01' // B服
       case '6':
-        return 'os_usa' // 美服
+        return this.e.isSr?'prod_official_usa':'os_usa' // 美服
       case '7':
-        return 'os_euro' // 欧服
+        return this.e.isSr?'prod_official_euro':'os_euro' // 欧服
       case '8':
-        return 'os_asia' // 亚服
+        return this.e.isSr?'prod_official_asia':'os_asia' // 亚服
       case '9':
-        return 'os_cht' // 港澳台服
+        return this.e.isSr?'prod_official_cht':'os_cht' // 港澳台服
     }
     return 'cn_gf01'
   }
