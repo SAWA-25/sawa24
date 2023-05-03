@@ -6,16 +6,18 @@
     <link rel="stylesheet" type="text/css" href="{{pluResPath}}html/logCount/logCount.css"/>
     <link rel="preload" href="{{resPath}}/font/HYWenHei-55W.ttf" as="font">
     <link rel="preload" href="{{resPath}}/font/tttgbnumber.ttf" as="font">
-    <link rel="preload" href="{{pluResPath}}img/other/bg5.png" as="image">
-    <link rel="preload" href="{{pluResPath}}img/other/bg4.png" as="image">    
+    {{ if !isSr }}
+      <link rel="preload" href="{{pluResPath}}img/other/bg5.png" as="image">
+      <link rel="preload" href="{{pluResPath}}img/other/bg4.png" as="image">
+    {{ /if }}
     {{@headStyle}}
   </head>
   <body id="container" class="body_box">
     <div class="container">
       <div class="head_box">
-        <div class="id_text">ID: {{uid}}</div>
-        <h2 class="day_text">抽卡统计-{{typeName}}</h2>
-        <img class="genshin_logo" src="{{pluResPath}}img/other/原神.png"/>
+        <div class="{{isSr ? 'sr': 'gs'}}id_text">ID: {{uid}}</div>
+        <h2 class="{{isSr ? 'sr': 'gs'}}day_text">抽卡统计-{{typeName}}</h2>
+        <img class="{{isSr ? 'starrail': 'genshin'}}_logo" src="{{srResPath}}img/other/{{isSr ? 'logo': '原神'}}.png"/>
       </div>
       {{each pool val}}
       {{if val.roleNum > 0}}
@@ -25,20 +27,20 @@
             <div class="title"><h2>「{{val.five}}」</h2></div>
             <span class="label label_301">{{val.count}}抽</span>
           </div>
-          {{if typeName != "常驻"}}
+          {{if typeName != "常驻" && typeName != "新手"}}
           <span class="date">{{val.start}} - {{val.end}}</span>
           {{/if}}
         </div>
         <div class="list_box">
           {{each val.role v}}
           <div class="item">
-            <div class="bg{{v.rank_type}}"></div>
+            <div class="{{isSr ? 'sr': 'bg'}}{{v.rank_type}}"></div>
             <span class="num {{if v.count>=5 && v.rank_type ==5}}life5{{/if}}">{{v.count}}</span>
             {{if v.item_type=='角色'}}
-            <img class="role_img" src="{{pluResPath}}img/role/{{v.name}}.png" onerror="whenError(this,'role')"/>
+            <img class="role_img" src="{{srResPath}}img/role/{{v.name}}.{{isSr? 'webp': 'png'}}" onerror="whenError(this,'role')"/>
             {{/if}} 
-            {{if v.item_type=='武器'}}
-            <img class="role_img" src="{{pluResPath}}img/weapon/{{v.name}}.png" onerror="whenError(this)"/>
+            {{if v.item_type=='武器' || v.item_type == '光锥' }}
+            <img class="role_img" src="{{srResPath}}img/weapon/{{v.name}}.{{isSr? 'webp': 'png'}}" onerror="whenError(this)"/>
             {{/if}}
           </div>
           {{/each}}

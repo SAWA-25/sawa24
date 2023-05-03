@@ -2,8 +2,9 @@
 export default class base {
   constructor (e = {}) {
     this.e = e
+    this.isSr = e.isSr
     this.userId = e?.user_id
-    this.model = 'genshin'
+    this.model = 'genshin' 
     this._path = process.cwd().replace(/\\/g, '/')
   }
 
@@ -18,15 +19,19 @@ export default class base {
    * @param pluResPath 插件资源路径
    */
   get screenData () {
-    let headImg = '白术'
+    let headImg = this.isSr ? 'StarRail/img/worldcard/星穹列车' : 'img/namecard/白术'
+    let gsStyle = 'background-position-x: 42px;  background-size: auto 101%;'
+    let srStyle = 'background-position-x: -10px; background-size: 500px; background-position-y: -90px;'
+    let pluResPath = `${this._path}/plugins/genshin/resources/`
 
     return {
       saveId: this.userId,
       cwd: this._path,
       tplFile: `./plugins/genshin/resources/html/${this.model}/${this.model}.html`,
       /** 绝对路径 */
-      pluResPath: `${this._path}/plugins/genshin/resources/`,
-      headStyle: `<style> .head_box { background: url(${this._path}/plugins/genshin/resources/img/namecard/${headImg}.png) #fff; background-position-x: 42px; background-repeat: no-repeat; background-size: auto 101%; }</style>`
+      pluResPath: pluResPath,
+      srResPath: this.isSr ? `${pluResPath}StarRail/` : pluResPath,
+      headStyle: `<style> .head_box { background: url(${this._path}/plugins/genshin/resources/${headImg}.png) #fff; background-repeat: no-repeat; ${this.isSr ? srStyle : gsStyle} }</style>`
     }
   }
 }
