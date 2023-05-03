@@ -55,7 +55,7 @@ export default class GachaLog extends base {
       if (i <= 1) await common.sleep(500)
     }
 
-    await this.e.reply('抽卡记录更新完成，您还可回复\n【#武器记录】统计武器池数据\n【#角色统计】按卡池统计数据\n【#导出记录】导出记录数据')
+    await this.e.reply(`抽卡记录更新完成，您还可回复\n【#${this?.e?.isSr?'光锥':'武器'}记录】统计武器池数据\n【#角色统计】按卡池统计数据\n【#导出记录】导出记录数据`)
 
     this.isLogUrl = true
 
@@ -429,7 +429,7 @@ export default class GachaLog extends base {
     /** 拿修改时间最后的uid */
     let uidArr = []
     for (let uid of logs) {
-      let json = `${this.path}${uid}/301.json`
+      let json = this?.e?.isSr ? `${this.path}${uid}/301.json` : `${this.path}${uid}/11.json`
       if (!fs.existsSync(json)) {
         continue
       }
@@ -485,7 +485,7 @@ export default class GachaLog extends base {
         } else {
           fourLog[val.name] = 1
         }
-        if (val.item_type == '武器') {
+        if (val.item_type == '武器' || val.item_type == '光锥') {
           weaponFourNum++
         }
       }
@@ -652,7 +652,8 @@ export default class GachaLog extends base {
   /** 渲染数据 */
   randData(data) {
     let line = []
-    if (this.type == 301) {
+    let weapon = this.e.isSr ? '光锥' : '武器'
+    if ([301, 11].includes(this.type)) {
       line = [[
         { lable: '未出五星', num: data.noFiveNum, unit: '抽' },
         { lable: '五星', num: data.fiveNum, unit: '个' },
@@ -662,16 +663,16 @@ export default class GachaLog extends base {
         { lable: '未出四星', num: data.noFourNum, unit: '抽' },
         { lable: '五星常驻', num: data.wai, unit: '个' },
         { lable: 'UP平均', num: data.isvalidNum, unit: '抽' },
-        { lable: 'UP花费原石', num: data.upYs, unit: '' }
+        { lable: `UP花费${this?.e?.isSr ? '星琼' : '原石'}`, num: data.upYs, unit: '' }
       ]]
     }
     // 常驻池
-    if (this.type == 200) {
+    if ([200, 1].includes(this.type)) {
       line = [[
         { lable: '未出五星', num: data.noFiveNum, unit: '抽' },
         { lable: '五星', num: data.fiveNum, unit: '个' },
         { lable: '五星平均', num: data.fiveAvg, unit: '抽', color: data.fiveColor },
-        { lable: '五星武器', num: data.weaponNum, unit: '个' }
+        { lable: `五星${weapon}`, num: data.weaponNum, unit: '个' }
       ], [
         { lable: '未出四星', num: data.noFourNum, unit: '抽' },
         { lable: '四星', num: data.fourNum, unit: '个' },
@@ -680,12 +681,12 @@ export default class GachaLog extends base {
       ]]
     }
     // 武器池
-    if (this.type == 302) {
+    if ([302, 12].includes(this.type)) {
       line = [[
         { lable: '未出五星', num: data.noFiveNum, unit: '抽' },
         { lable: '五星', num: data.fiveNum, unit: '个' },
         { lable: '五星平均', num: data.fiveAvg, unit: '抽', color: data.fiveColor },
-        { lable: '四星武器', num: data.weaponFourNum, unit: '个' }
+        { lable: `四星${weapon}`, num: data.weaponFourNum, unit: '个' }
       ], [
         { lable: '未出四星', num: data.noFourNum, unit: '抽' },
         { lable: '四星', num: data.fourNum, unit: '个' },
@@ -693,7 +694,20 @@ export default class GachaLog extends base {
         { lable: '四星最多', num: data.maxFour.num, unit: data.maxFour.name }
       ]]
     }
-
+    // 新手池
+    if ([100, 2].includes(this.type)) {
+      line = [[
+        { lable: '未出五星', num: data.noFiveNum, unit: '抽' },
+        { lable: '五星', num: data.fiveNum, unit: '个' },
+        { lable: '五星平均', num: data.fiveAvg, unit: '抽', color: data.fiveColor },
+        { lable: `五星${weapon}`, num: data.weaponNum, unit: '个' }
+      ], [
+        { lable: '未出四星', num: data.noFourNum, unit: '抽' },
+        { lable: '四星', num: data.fourNum, unit: '个' },
+        { lable: '四星平均', num: data.fourAvg, unit: '抽' },
+        { lable: '四星最多', num: data.maxFour.num, unit: data.maxFour.name }
+      ]]
+    }
     let hasMore = false
     if (this.e.isGroup && data.fiveLog.length > 48) {
       data.fiveLog = data.fiveLog.slice(0, 48)
@@ -720,17 +734,17 @@ export default class GachaLog extends base {
     switch (String(uid)[0]) {
       case '1':
       case '2':
-        return this.e.isSr?'prod_gf_cn':'cn_gf01' // 官服
+        return this.e.isSr ? 'prod_gf_cn' : 'cn_gf01' // 官服
       case '5':
-        return this.e.isSr?'prod_qd_cn':'cn_qd01' // B服
+        return this.e.isSr ? 'prod_qd_cn' : 'cn_qd01' // B服
       case '6':
-        return this.e.isSr?'prod_official_usa':'os_usa' // 美服
+        return this.e.isSr ? 'prod_official_usa' : 'os_usa' // 美服
       case '7':
-        return this.e.isSr?'prod_official_euro':'os_euro' // 欧服
+        return this.e.isSr ? 'prod_official_euro' : 'os_euro' // 欧服
       case '8':
-        return this.e.isSr?'prod_official_asia':'os_asia' // 亚服
+        return this.e.isSr ? 'prod_official_asia' : 'os_asia' // 亚服
       case '9':
-        return this.e.isSr?'prod_official_cht':'os_cht' // 港澳台服
+        return this.e.isSr ? 'prod_official_cht' : 'os_cht' // 港澳台服
     }
     return 'cn_gf01'
   }

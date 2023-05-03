@@ -86,7 +86,7 @@ export default class LogCount extends base {
 
   getPool() {
     let msg = this.e.msg.replace(/#|抽卡|记录|祈愿|分析|池|原神|星铁|崩坏星穹铁道|铁道|抽卡|统计|池/g, '')
-    this.type = 301
+    this.type = this.e.isSr?11:301
     this.typeName = '角色'
     switch (msg) {
       case 'up':
