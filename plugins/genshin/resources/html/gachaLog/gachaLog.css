@@ -35,12 +35,24 @@ body {
   box-shadow: 0 5px 10px 0 rgb(0 0 0 / 15%);
 }
 
-.head_box .id_text {
+.head_box .gsid_text {
   font-size: 24px;
 }
 
-.head_box .day_text {
+.head_box .gsday_text {
   font-size: 20px;
+}
+
+.head_box .srid_text {
+  color: #f5e7f4;
+  padding: 5px 0; 
+  font-size: 26px;
+} 
+
+.head_box .srday_text {
+  color: #f5e7f4;
+  padding: 5px 0;
+  font-size: 22px;
 }
 
 .head_box .genshin_logo {
@@ -48,6 +60,13 @@ body {
   top: 1px;
   right: 15px;
   width: 97px;
+}
+
+.head_box .starrail_logo {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+  width: 115px;
 }
 
 .logo {
@@ -164,6 +183,13 @@ body {
   background-repeat: no-repeat;
 }
 
+.card_list .item.sr5 img {
+  background: #885550;
+  background: linear-gradient(180deg,#885550,#c9a36a 53%);
+  width: 100%;
+  height: 70px;
+}
+
 .card_list .item.star4 img {
   width: 100%;
   height: 70px;
@@ -233,6 +259,25 @@ body {
 .label_200 {
   background-color: #757CC8;
 }
+.label_100 {
+  background-color: #75c895;
+}
+
+.label_11 {
+  background-color: rgb(235 106 75);
+}
+
+.label_12{
+  background-color: #E69449;
+}
+
+.label_1 {
+  background-color: #757CC8;
+}
+.label_2 {
+  background-color: #75c895;
+}
+
 
 .label {
   color: #fff;

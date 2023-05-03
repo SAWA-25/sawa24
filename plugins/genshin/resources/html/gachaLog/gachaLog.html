@@ -5,8 +5,10 @@
   <link rel="shortcut icon" href="#"/>
   <link rel="stylesheet" type="text/css" href="{{pluResPath}}html/gachaLog/gachaLog.css"/>
   <link rel="preload" href="{{resPath}}font/tttgbnumber.ttf" as="font">
-  <link rel="preload" href="{{pluResPath}}img/namecard/{{headImg}}.png" as="image">
-  <link rel="preload" href="{{pluResPath}}img/other/bg5.png" as="image">
+  <link rel="preload" href="{{srResPath}}{{headImg}}.png" as="image">
+  {{ if !isSr}}
+    <link rel="preload" href="{{pluResPath}}img/other/bg5.png" as="image">
+  {{ /if }}
   {{@headStyle}}
 </head>
 <body id="container" class="body_box">
@@ -14,14 +16,14 @@
   <div class="info_box">
 
     <div class="head_box">
-      <div class="id_text">
+      <div class="{{isSr ? 'sr': 'gs'}}id_text">
         ID: {{uid}}
       </div>
-      <h2 class="day_text">
+      <h2 class="{{isSr ? 'sr': 'gs'}}day_text">
         {{allNum}}抽
         <span class="label label_{{type}}">{{typeName}}池</span>
       </h2>
-      <img class="genshin_logo" src="{{pluResPath}}img/other/原神.png"/>
+      <img class="{{isSr ? 'starrail': 'genshin'}}_logo" src="{{srResPath}}img/other/{{isSr ? 'logo': '原神'}}.png"/>
     </div>
 
     <div class="data_box">
@@ -46,12 +48,12 @@
 
       <div class="card_list">
         {{each fiveLog val}}
-        <div class="item star5">
+        <div class="item {{isSr ? 'sr5': 'star5'}}">
           {{ if val.isUp && typeName == '角色' }}
             <span class="minimum">UP</span>
           {{/if}}
           <img class="role"
-               src="{{pluResPath}}img/{{val.item_type=='角色'?'role':'weapon'}}/{{val.name}}.png"
+               src="{{srResPath}}img/{{val.item_type=='角色'?'role':'weapon'}}/{{val.name}}.{{isSr? 'webp': 'png'}}"
                onerror="whenError(this,'{{val.item_type=='角色'?'role':'weapon'}}')"/>
           <!-- <div class="num">{{val.num}}</div>-->
           <div class="num_name">{{val.num}}</div>

@@ -97,12 +97,7 @@ export class gcLog extends plugin {
 
     let data = await new GachaLog(this.e).logUrl()
     if (!data) return
-    let url='gachaLog'
-    if(this.e.isSr){
-      data.tplFile='./plugins/genshin/resources/StarRail/html/gachaLog/gachaLog.html'
-      url='StarRail/gachaLog'
-    }
-    let img = await puppeteer.screenshot(url, data)
+    let img = await puppeteer.screenshot('gachaLog', data)
     if (img) await this.reply(img)
   }
 
@@ -124,12 +119,8 @@ export class gcLog extends plugin {
     if (!data) return false
 
     if (typeof data != 'object') return
-    let url='gachaLog'
-    if(this.e.isSr){
-      data.tplFile='./plugins/genshin/resources/StarRail/html/gachaLog/gachaLog.html'
-      url='StarRail/gachaLog'
-    }
-    let img = await puppeteer.screenshot(url, data)
+
+    let img = await puppeteer.screenshot('gachaLog', data)
     if (img) await this.reply(img)
   }
 
@@ -137,12 +128,8 @@ export class gcLog extends plugin {
   async getLog () {
     let data = await new GachaLog(this.e).getLogData()
     if (!data) return
-    let url='gachaLog'
-    if(this.e.isSr){
-      data.tplFile='./plugins/genshin/resources/StarRail/html/gachaLog/gachaLog.html'
-      url='StarRail/gachaLog'
-    }
-    let img = await puppeteer.screenshot(url, data)
+
+    let img = await puppeteer.screenshot('gachaLog', data)
     if (img) await this.reply(img)
   }
 
@@ -215,12 +202,8 @@ export class gcLog extends plugin {
   async logCount () {
     let data = await new LogCount(this.e).count()
     if (!data) return
-    let url='logCount'
-    if(this.e.isSr){
-      data.tplFile='./plugins/genshin/resources/StarRail/html/logCount/logCount.html'
-      url='StarRail/logCount'
-    }
-    let img = await puppeteer.screenshot(url, data)
+
+    let img = await puppeteer.screenshot('logCount', data)
     if (img) await this.reply(img)
   }
 }
