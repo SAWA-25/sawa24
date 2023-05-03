@@ -204,7 +204,7 @@ export default class GachaLog extends base {
     }).toString()
     if (this.e.isSr) {
       logUrl = 'https://api-takumi.mihoyo.com/common/gacha_record/api/getGachaLog?'
-      if(!['prod_gf_cn','prod_qd_cn'].includes(param.region)){
+      if (!['prod_gf_cn', 'prod_qd_cn'].includes(param.region)) {
         logUrl = 'https://api-os-takumi.mihoyo.com/common/gacha_record/api/getGachaLog?'
       }
       logParam = new URLSearchParams({
@@ -621,10 +621,23 @@ export default class GachaLog extends base {
     if (['莫娜', '七七', '迪卢克', '琴', '姬子', '杰帕德', '彦卿', '白露', '瓦尔特', '克拉拉', '布洛妮娅'].includes(this.role.name)) {
       return false
     }
-
-    if (this.role.name == '刻晴') {
-      let start = new Date('2021-02-17 18:00:00').getTime()
-      let end = new Date('2021-03-02 15:59:59').getTime()
+    let role5join = {
+      '刻晴': {
+        start: '2021-02-17 18:00:00',
+        end: '2021-03-02 15:59:59'
+      },
+      '提纳里': {
+        start: '2022-08-24 06:00:00',
+        end: '2022-09-09 17:59:59'
+      },
+      '迪希雅': {
+        start: '2023-03-01 06:00:00',
+        end: '2023-03-21 17:59:59'
+      }
+    }
+    if (lodash.keys(role5join).includes(this.role.name)) {
+      let start = new Date(role5join[this.role.name].start).getTime()
+      let end = new Date(role5join[this.role.name].end).getTime()
       let logTime = new Date(this.role.time).getTime()
 
       if (logTime < start || logTime > end) {
@@ -633,19 +646,6 @@ export default class GachaLog extends base {
         return true
       }
     }
-
-    if (this.role.name == '提纳里') {
-      let start = new Date('2022-08-24 06:00:00').getTime()
-      let end = new Date('2022-09-09 17:59:59').getTime()
-      let logTime = new Date(this.role.time).getTime()
-
-      if (logTime < start || logTime > end) {
-        return false
-      } else {
-        return true
-      }
-    }
-
     return true
   }
 
