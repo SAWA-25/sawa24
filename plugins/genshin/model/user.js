@@ -251,12 +251,12 @@ export default class User extends base {
         region_name.push(ckData[v].region_name)
       }
     });
+    let count = 0;
     for (let n of region_name) {
-      let count = 0;
       msg.push(n)
       for (let i in uids) {
         if (ckData[uids[i]].region_name == n) {
-          let tmp = `${Number(count) + 1}: ${uids[i]}`
+          let tmp = `${++count}: ${uids[i]}`
           if (uids[i] * 1 === uid) {
             tmp += ' ☑'
           }
