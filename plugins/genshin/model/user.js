@@ -104,7 +104,7 @@ export default class User extends base {
     await this.e.reply(uidMsg.join('\n'))
     let msg = ''
     this.region_name += lodash.map(this.allUid, 'region_name').join(',')
-    if (/天空岛|世界树/.test(this.region_name)) {
+    if (/天空岛|世界树|America Server|Europe Server|Asia Server/.test(this.region_name)) {
       msg += '原神模块支持：\n【#体力】查询当前树脂'
       msg += '\n【#签到】米游社原神自动签到'
       msg += '\n【#关闭签到】开启或关闭原神自动签到'

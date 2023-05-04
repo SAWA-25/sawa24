@@ -391,7 +391,9 @@ export default class MysUser extends BaseModel {
           }
         }
       }
-      result.data.list=list
+      if (result?.data?.list) {
+        result.data.list=list
+      }
     }else{
       let res = await fetch(url[serv], { method: 'get', headers: { Cookie: ck } })
       if (!res.ok) return false
