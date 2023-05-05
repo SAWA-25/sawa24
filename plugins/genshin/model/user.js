@@ -149,6 +149,8 @@ export default class User extends base {
     if (!res.data.list || res.data.list.length <= 0) {
       this.checkMsg = '该账号尚未绑定原神或星穹角色！'
       return false
+    } else {
+      res.data.list = res.data.list.filter(v => ['hk4e_cn', 'hkrpg_cn', 'hk4e_global'].includes(v.game_biz))
     }
 
     /** 米游社默认展示的角色 */
