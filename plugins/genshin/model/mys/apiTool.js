@@ -180,6 +180,15 @@ export default class apiTool {
             urlMap.genshin.useCdk.url = 'https://sg-hk4e-api.hoyoverse.com/common/apicdkey/api/webExchangeCdkey'
             urlMap.genshin.useCdk.query = `uid=${this.uid}&region=${this.server}&lang=zh-cn&cdkey=${data.cdk}&game_biz=hk4e_global`
           }
+          if(this.isSr&&this.server.includes('official')){
+            urlMap.honkaisr.bbs_sign.url=`https://sg-public-api.hoyolab.com/event/luna/os/sign`
+            urlMap.honkaisr.bbs_sign.body = { act_id: 'e202303301540311', lang: "zh-cn" }
+            urlMap.honkaisr.bbs_sign_home.url=`https://sg-public-api.hoyolab.com/event/luna/os/home`
+            urlMap.honkaisr.bbs_sign_home.query=`act_id=e202303301540311&region=${this.server}&uid=${this.uid}`
+
+            urlMap.honkaisr.bbs_sign_info.url=`https://sg-public-api.hoyolab.com/event/luna/os/info`
+            urlMap.honkaisr.bbs_sign_info.query=`act_id=e202303301540311&region=${this.server}&uid=${this.uid}`
+          }
         return urlMap[this.game]
     }
 }

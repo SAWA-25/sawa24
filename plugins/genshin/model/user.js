@@ -116,7 +116,7 @@ export default class User extends base {
       msg += '\n【#我的ck】查看当前绑定ck'
       msg += '\n【#删除ck】删除当前绑定ck'
     }
-    if (/星穹列车/.test(this.region_name)) {
+    if (/星穹列车|Server|无名客/.test(this.region_name)) {
       msg += "\n星穹铁道支持：\n功能还在咕咕咕~"
     }
     msg += '\n 支持绑定多个ck'
@@ -150,18 +150,22 @@ export default class User extends base {
       this.checkMsg = '该账号尚未绑定原神或星穹角色！'
       return false
     } else {
-      res.data.list = res.data.list.filter(v => ['hk4e_cn', 'hkrpg_cn', 'hk4e_global'].includes(v.game_biz))
+      res.data.list = res.data.list.filter(v => ['hk4e_cn', 'hkrpg_cn', 'hk4e_global','hkrpg_global'].includes(v.game_biz))
     }
-
+    //避免同时多个默认展示角色时候只绑定一个
+    let is_chosen =false
     /** 米游社默认展示的角色 */
     for (let val of res.data.list) {
-      if (val.is_chosen) {
+      if (val.is_chosen&&!is_chosen) {
         this.uid = val.game_uid
         this.region_name = val.region_name
+        this.region = val.region
+        is_chosen=true
       } else {
         this.allUid.push({
           uid: val.game_uid,
-          region_name: val.region_name
+          region_name: val.region_name,
+          region:val.region
         })
       }
     }
@@ -199,6 +203,7 @@ export default class User extends base {
       ck: this.ck,
       ltuid: this.ltuid,
       login_ticket: this.login_ticket,
+      region:this.region,
       region_name: this.region_name,
       device_id: this.getGuid(),
       isMain: true
@@ -212,6 +217,7 @@ export default class User extends base {
         ck: this.ck,
         ltuid: this.ltuid,
         region_name: v.region_name,
+        region:v.region,
         device_id: this.getGuid(),
         isMain: false
       }

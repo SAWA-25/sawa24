@@ -4,7 +4,7 @@
   font-weight: normal;
   font-style: normal;
 }
-/* ²»ÈÃÉÏ´«×ÖÌå£¬ÈçĞèÒªÇëĞŞ¸ÄÂ·¾¶»òÕß×ÔĞĞÌí¼Ó ²¿·Ö²å¼şÓĞ
+/* ä¸è®©ä¸Šä¼ å­—ä½“ï¼Œå¦‚éœ€è¦è¯·ä¿®æ”¹è·¯å¾„æˆ–è€…è‡ªè¡Œæ·»åŠ  éƒ¨åˆ†æ’ä»¶æœ‰
 @font-face {
   font-family: "MiSans-Bold";
   src: url("../../../../../../resources/font/MiSans-Bold.ttf");
@@ -35,7 +35,7 @@
   padding: 0;
   box-sizing: border-box;
   user-select: none;
-  /* ÈçÊ¹ÓÃ×ÖÌåÇë°ÑÏÂÃæ´úÂë·Å³öÀ´£¬²¢×¢ÊÍ»òÕßÉ¾³ı font-weight: bold; ÊôĞÔ */
+  /* å¦‚ä½¿ç”¨å­—ä½“è¯·æŠŠä¸‹é¢ä»£ç æ”¾å‡ºæ¥ï¼Œå¹¶æ³¨é‡Šæˆ–è€…åˆ é™¤ font-weight: bold; å±æ€§ */
   /* font-family: MiSans-Demibold; */
   font-weight: bold;
 }
@@ -85,8 +85,14 @@ body {
 .uid_span {
   text-indent: 1em;
   font-size: 48px;
+  display: flex;
 }
-
+.uid_name{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space:nowrap;
+    max-width: 5em;
+}
 .uid_item:nth-child(2) {
   background-color: #595045;
   border-radius: 0 0 12px 0px;

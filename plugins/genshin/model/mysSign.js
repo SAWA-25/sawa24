@@ -59,7 +59,7 @@ export default class MysSign extends base {
 
   async doSign(ck, isLog = true) {
     ck = this.setCk(ck)
-    this.isSr=['星穹列车','无名客'].includes(ck.region_name)
+    this.isSr=/prod/.test(ck.region)
     ck.region_name=ck.region_name ?? '原神'
     this.mysApi = new MysApi(ck.uid, ck.ck, { log: isLog, device_id: ck.device_id },this.isSr)
     this.key = `${this.prefix}isSign:${this.mysApi.uid}`
@@ -278,6 +278,7 @@ export default class MysSign extends base {
     let invalidNum = 0
     let verifyNum = 0
     let contiNum = 0
+    let failSignCount = 5
 
     for (let i in uids) {
       this.ckNum = Number(i) + 1

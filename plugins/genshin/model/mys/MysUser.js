@@ -376,13 +376,12 @@ export default class MysUser extends BaseModel {
   static async getGameRole (ck, serv = 'mys') {
     let url = {
       mys: 'https://api-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie',
-      hoyolab: 'https://api-os-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie?game_biz=hk4e_global'
+      hoyolab: 'https://api-os-takumi.mihoyo.com/binding/api/getUserGameRolesByCookie'
     }
 
     let res = await fetch(url[serv], { method: 'get', headers: { Cookie: ck } })
     if (!res.ok) return false
     res = await res.json()
-
     return res
   }
 
