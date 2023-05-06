@@ -4,11 +4,10 @@ import lodash from 'lodash'
 import NoteUser from './NoteUser.js'
 import MysUser from './MysUser.js'
 import DailyCache from './DailyCache.js'
-
 export default class MysInfo {
   static tips = '请先#绑定cookie\n发送【体力帮助】查看配置教程'
 
-  constructor (e) {
+  constructor(e) {
     if (e) {
       this.e = e
       this.userId = String(e.user_id)
@@ -28,7 +27,7 @@ export default class MysInfo {
     this.auth = ['dailyNote', 'bbs_sign_info', 'bbs_sign_home', 'bbs_sign', 'ys_ledger', 'compute', 'avatarSkill', 'detail', 'blueprint']
   }
 
-  static async init (e, api) {
+  static async init(e, api) {
     await MysInfo.initCache()
 
     let mysInfo = new MysInfo(e)
@@ -70,7 +69,7 @@ export default class MysInfo {
     return mysInfo
   }
 
-  static async getNoteUser (e) {
+  static async getNoteUser(e) {
     await MysInfo.initCache()
     let user = await NoteUser.create(e)
     if (user) {
@@ -87,7 +86,7 @@ export default class MysInfo {
    * @param matchMsgUid 用于判断消息是否为uid数据
    * @returns {Promise<string|boolean|*|string>}
    */
-  static async getUid (e, matchMsgUid = true) {
+  static async getUid(e, matchMsgUid = true) {
     let user = await NoteUser.create(e)
     if (e.uid && matchMsgUid) {
       /** 没有绑定的自动绑定 */
@@ -131,7 +130,7 @@ export default class MysInfo {
    * @param e
    * @returns {Promise<boolean|*>}
    */
-  static async getSelfUid (e) {
+  static async getSelfUid(e) {
     let { msg = '', at = '' } = e
     if (!msg) return false
 
@@ -147,7 +146,7 @@ export default class MysInfo {
   }
 
   /** 判断绑定ck才能查询 */
-  checkAuth (api) {
+  checkAuth(api) {
     if (api === 'cookie') {
       return true
     }
@@ -187,7 +186,7 @@ export default class MysInfo {
     if (!mysInfo.uid || !mysInfo.ckInfo.ck) return false
     e.uid = mysInfo.uid
 
-    let mysApi = new MysApi(mysInfo.uid, mysInfo.ckInfo.ck, option)
+    let mysApi = new MysApi(mysInfo.uid, mysInfo.ckInfo.ck, option,e.isSr)
 
     let res
     if (lodash.isObject(api)) {
@@ -240,7 +239,7 @@ export default class MysInfo {
    * @param onlySelfCk 是否只获取uid自己对应的ck。为true则只获取uid对应ck，若无则返回为空
    * @returns {Promise<string|string|*>} 查询ck，获取失败则返回空
    */
-  async getCookie (onlySelfCk = false) {
+  async getCookie(onlySelfCk = false) {
     if (this.ckInfo.ck) return this.ckInfo.ck
 
     let mysUser = await MysUser.getByQueryUid(this.uid, onlySelfCk)
@@ -263,7 +262,7 @@ export default class MysInfo {
    * 初始化公共CK
    * @returns {Promise<void>}
    */
-  static async initPubCk () {
+  static async initPubCk() {
     // 初始化公共CK
     let pubCount = 0
     let pubCks = GsCfg.getConfig('mys', 'pubCk') || []
@@ -287,7 +286,7 @@ export default class MysInfo {
    * 默认会将用户CK加入查询池
    * @returns {Promise<void>}
    */
-  static async initUserCk () {
+  static async initUserCk() {
     // 初始化用户缓存
     let userCount = 0
     await NoteUser.forEach(async function (user) {
@@ -302,7 +301,7 @@ export default class MysInfo {
    * @param clearData 强制初始化时是否清除已有数据 (刷新/重置)
    * @returns {Promise<boolean>}
    */
-  static async initCache (force = false, clearData = false) {
+  static async initCache(force = false, clearData = false) {
     // 检查缓存标记
     let cache = DailyCache.create()
     if (!force && await cache.get('cache-ready')) {
@@ -325,7 +324,7 @@ export default class MysInfo {
     return true
   }
 
-  async checkCode (res, type) {
+  async checkCode(res, type) {
     if (!res) {
       this.e.reply('米游社接口请求失败，暂时无法查询')
       return false
@@ -337,6 +336,7 @@ export default class MysInfo {
         res.retcode = 0
       }
     }
+
     switch (res.retcode) {
       case 0:
         break
@@ -372,7 +372,7 @@ export default class MysInfo {
           this.e.reply(`uid:${this.uid}，请先去米游社绑定角色`)
         }
         break
-        // 伙伴不存在~
+      // 伙伴不存在~
       case -1002:
         if (res.api === 'detail') res.retcode = 0
         break
@@ -393,7 +393,7 @@ export default class MysInfo {
   }
 
   /** 删除失效ck */
-  async delCk () {
+  async delCk() {
     if (!this.ckUser) {
       return false
     }
@@ -403,18 +403,18 @@ export default class MysInfo {
   }
 
   /** 查询次数满，今日内标记失效 */
-  async disableToday () {
+  async disableToday() {
     /** 统计次数设为超限 */
     await this.ckUser.disable()
   }
 
-  static async getBingCkUid () {
+  static async getBingCkUid() {
     let res = await GsCfg.getBingCk()
     return { ...res.ck }
   }
 
   // 获取uid绑定的ck信息
-  static async checkUidBing (uid) {
+  static async checkUidBing(uid) {
     let ckUser = await MysUser.getByQueryUid(uid, true)
     if (ckUser && ckUser.ckData) {
       return ckUser.ckData
@@ -422,7 +422,7 @@ export default class MysInfo {
     return false
   }
 
-  static async delDisable () {
+  static async delDisable() {
     return await MysUser.delDisable()
   }
 }

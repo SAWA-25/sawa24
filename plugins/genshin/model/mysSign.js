@@ -9,7 +9,7 @@ import cfg from '../../../lib/config/config.js'
 
 let signing = false
 export default class MysSign extends base {
-  constructor (e) {
+  constructor(e) {
     super(e)
     this.model = 'sign'
     this.isTask = false
@@ -18,7 +18,7 @@ export default class MysSign extends base {
     this.cfg = gsCfg.getConfig('mys', 'set')
   }
 
-  static async sign (e) {
+  static async sign(e) {
     let mysSign = new MysSign(e)
 
     if (e.msg.includes('force')) mysSign.force = true
@@ -57,9 +57,11 @@ export default class MysSign extends base {
     await e.reply(msg)
   }
 
-  async doSign (ck, isLog = true) {
+  async doSign(ck, isLog = true) {
     ck = this.setCk(ck)
-    this.mysApi = new MysApi(ck.uid, ck.ck, { log: isLog, device_id: ck.device_id })
+    this.isSr=['星穹列车','无名客'].includes(ck.region_name)
+    ck.region_name=ck.region_name ?? '原神'
+    this.mysApi = new MysApi(ck.uid, ck.ck, { log: isLog, device_id: ck.device_id },this.isSr)
     this.key = `${this.prefix}isSign:${this.mysApi.uid}`
     this.log = `[uid:${ck.uid}][qq:${lodash.padEnd(this.e.user_id, 10, ' ')}]`
 
@@ -68,7 +70,7 @@ export default class MysSign extends base {
       let reward = await this.getReward(isSigned)
       return {
         retcode: 0,
-        msg: `uid:${ck.uid}，今天已签到\n第${isSigned}天奖励：${reward}`,
+        msg: `${ck.region_name}\nuid:${ck.uid}，今天已签到\n第${isSigned}天奖励：${reward}`,
         is_sign: true
       }
     }
@@ -87,7 +89,7 @@ export default class MysSign extends base {
       }
       return {
         retcode: -100,
-        msg: `签到失败，uid:${ck.uid}，绑定cookie已失效`,
+        msg: `签到失败，${ck.region_name}\nuid:${ck.uid}，绑定cookie已失效`,
         is_invalid: true
       }
     }
@@ -114,7 +116,7 @@ export default class MysSign extends base {
       this.setCache(this.signInfo.total_sign_day)
       return {
         retcode: 0,
-        msg: `uid:${ck.uid}，今天已签到\n第${this.signInfo.total_sign_day}天奖励：${reward}`,
+        msg: `${ck.region_name}\nuid:${ck.uid}，今天已签到\n第${this.signInfo.total_sign_day}天奖励：${reward}`,
         is_sign: true
       }
     }
@@ -140,24 +142,25 @@ export default class MysSign extends base {
 
       return {
         retcode: 0,
-        msg: `uid:${ck.uid}，${tips}\n第${totalSignDay}天奖励：${reward}`
+        msg: `${ck.region_name}\nuid:${ck.uid}，${tips}\n第${totalSignDay}天奖励：${reward}`
       }
     }
 
     return {
       retcode: -1000,
-      msg: `uid:${ck.uid}，签到失败：${this.signMsg}`
+      msg: `${ck.region_name}\nuid:${ck.uid}，签到失败：${this.signMsg}`
     }
   }
 
-  setCk (ck) {
+  setCk(ck) {
     ck.ck = lodash.trim(ck.ck, ';') + `; _MHYUUID=${ck.device_id}; `
     return ck
   }
 
   // 缓存签到奖励
-  async getReward (signDay) {
+  async getReward(signDay) {
     let key = `${this.prefix}reward`
+    if(this.isSr) key=`Yz:StarRail:StarRail:reward`
     let reward = await redis.get(key)
 
     if (reward) {
@@ -186,7 +189,7 @@ export default class MysSign extends base {
     return reward
   }
 
-  async bbsSign () {
+  async bbsSign() {
     this.signApi = true
     this.is_verify = false
     let sign = await this.mysApi.getData('bbs_sign')
@@ -275,7 +278,6 @@ export default class MysSign extends base {
     let invalidNum = 0
     let verifyNum = 0
     let contiNum = 0
-    let failSignCount = 5
 
     for (let i in uids) {
       this.ckNum = Number(i) + 1
@@ -340,12 +342,12 @@ export default class MysSign extends base {
     signing = false
   }
 
-  async setCache (day) {
+  async setCache(day) {
     let end = Number(moment().endOf('day').format('X')) - Number(moment().format('X'))
     redis.setEx(this.key, end, String(day))
   }
 
-  async getsignNum (uids) {
+  async getsignNum(uids) {
     let signNum = (await redis.KEYS(`${this.prefix}isSign*`)).length
 
     let noSignNum = uids.length - signNum
@@ -355,7 +357,7 @@ export default class MysSign extends base {
     return { noSignNum, signNum }
   }
 
-  countTime (time) {
+  countTime(time) {
     let hour = Math.floor((time / 3600) % 24)
     let min = Math.floor((time / 60) % 60)
     let sec = Math.floor(time % 60)
@@ -366,7 +368,7 @@ export default class MysSign extends base {
     return msg
   }
 
-  async signClose () {
+  async signClose() {
     let model = '开启'
     if (/关闭|取消/.test(this.e.msg)) {
       model = '关闭'
