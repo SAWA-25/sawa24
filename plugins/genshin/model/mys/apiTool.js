@@ -184,10 +184,10 @@ export default class apiTool {
             urlMap.honkaisr.bbs_sign.url=`https://sg-public-api.hoyolab.com/event/luna/os/sign`
             urlMap.honkaisr.bbs_sign.body = { act_id: 'e202303301540311', lang: "zh-cn" }
             urlMap.honkaisr.bbs_sign_home.url=`https://sg-public-api.hoyolab.com/event/luna/os/home`
-            urlMap.honkaisr.bbs_sign_home.query=`act_id=e202303301540311&region=${this.server}&uid=${this.uid}`
+            urlMap.honkaisr.bbs_sign_home.query=`act_id=e202303301540311&region=${this.server}&uid=${this.uid}&lang=zh-cn`
 
             urlMap.honkaisr.bbs_sign_info.url=`https://sg-public-api.hoyolab.com/event/luna/os/info`
-            urlMap.honkaisr.bbs_sign_info.query=`act_id=e202303301540311&region=${this.server}&uid=${this.uid}`
+            urlMap.honkaisr.bbs_sign_info.query=`act_id=e202303301540311&region=${this.server}&uid=${this.uid}&lang=zh-cn`
           }
         return urlMap[this.game]
     }
