@@ -249,29 +249,17 @@ export default class User extends base {
       await this.e.reply(`当前绑定uid：${user.uid || '无'}`, false, { at: true })
       return
     }
-    let uids = user.ckUids
     let ckData = user.ckData
     let uid = user.uid * 1
     let msg = [`当前uid：${uid}`, '当前绑定cookie Uid列表', '通过【#uid+序号】来切换uid']
-    let region_name = []
-    Object.keys(ckData).forEach((v) => {
-      if (!region_name.includes(ckData[v].region_name)) {
-        region_name.push(ckData[v].region_name)
-      }
-    });
     let count = 0;
-    for (let n of region_name) {
-      msg.push(n)
-      for (let i in uids) {
-        if (ckData[uids[i]].region_name == n) {
-          let tmp = `${++count}: ${uids[i]}`
-          if (uids[i] * 1 === uid) {
-            tmp += ' ☑'
-          }
-          msg.push(tmp)
-        }
+    Object.keys(ckData).forEach((v) => {
+      let tmp = `${++count}. ${ckData[v].region_name}: ${ckData[v].uid}`
+      if (ckData[v].uid * 1 === uid) {
+        tmp += ' ☑'
       }
-    }
+      msg.push(tmp)
+    })
     await this.e.reply(msg.join('\n'))
   }
 
