@@ -15,3 +15,8 @@ signTime: 0 2 0 * * ?
 abbrSetAuth: 0
 # 米游社攻略图默认来源设置 1-西风驿站 2-原神观测枢 3-派蒙喵喵屋 4-OH是姜姜呀
 defaultSource: 1
+
+# 米游社手动验证 0-关闭 1-开启
+verify: 0
+# 米游社手动验证API
+verifyAddr: 'https://hlhs-nb.cn/GeeTest/register'

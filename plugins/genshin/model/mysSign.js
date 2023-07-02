@@ -2,6 +2,7 @@ import moment from 'moment'
 import lodash from 'lodash'
 import base from './base.js'
 import MysApi from './mys/mysApi.js'
+import MysInfo from "./mys/mysInfo.js";
 import gsCfg from './gsCfg.js'
 import User from './user.js'
 import common from '../../../lib/common/common.js'
@@ -208,12 +209,24 @@ export default class MysSign extends base {
     }
 
     if (sign.data && sign.data.risk_code === 375) {
-      this.signMsg = '验证码失败'
-      sign.message = '验证码失败'
-      this.is_verify = true
+      let verify = await MysInfo.verify(this.e, { uid: this.mysApi.uid, ...sign.data })
+      if (!verify) {
+        this.signMsg = '验证码失败'
+        sign.message = '验证码失败'
+        this.is_verify = true
 
-      logger.mark(`[原神签到失败]${this.log}：${sign.message} 第${this.ckNum}个`)
-      return false
+        logger.mark(`[原神签到失败]${this.log}：${sign.message} 第${this.ckNum}个`)
+        return false
+      } else {
+        sign = await this.mysApi.getData('bbs_sign', {
+          headers: {
+            'x-rpc-seccode': verify.geetest_seccode,
+            'x-rpc-validate': verify.geetest_validate,
+            'x-rpc-challenge': verify.geetest_challenge
+          }
+        })
+        this.signMsg = sign?.message ?? 'Too Many Requests'
+      }
     }
 
     if (sign.retcode === 0 && (sign?.data.success === 0 || sign?.message === 'OK')) {
