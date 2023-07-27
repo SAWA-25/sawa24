@@ -46,6 +46,6 @@
         "express-art-template": "^1.0.1"
     },
     "workspaces": [
-        "./plogins/*"
+        "./plugins/*"
     ]
 }
