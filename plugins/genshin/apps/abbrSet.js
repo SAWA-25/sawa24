@@ -3,9 +3,10 @@ import fs from 'node:fs'
 import gsCfg from '../model/gsCfg.js'
 import YAML from 'yaml'
 import lodash from 'lodash'
+import common from '../../../lib/common/common.js'
 
 export class abbrSet extends plugin {
-  constructor (e) {
+  constructor(e) {
     super({
       name: '别名设置',
       dsc: '角色别名设置',
@@ -30,7 +31,7 @@ export class abbrSet extends plugin {
     this.file = './plugins/genshin/config/role.name.yaml'
   }
 
-  async init () {
+  async init() {
     if (!fs.existsSync(this.file)) {
       fs.writeFileSync(this.file, `神里绫华:
   - 龟龟
@@ -38,7 +39,7 @@ export class abbrSet extends plugin {
     }
   }
 
-  async abbr () {
+  async abbr() {
     if (!await this.checkAuth()) return
     let role = gsCfg.getRole(this.e.msg, '#|设置|配置|别名|昵称')
     if (!role) return false
@@ -48,7 +49,7 @@ export class abbrSet extends plugin {
     await this.reply(`请发送${role.alias}别名，多个用空格隔开`)
   }
 
-  async checkAuth () {
+  async checkAuth() {
     if (!this.e.isGroup && !this.e.isMaster) {
       await this.reply('禁止私聊设置角色别名')
       return false
@@ -76,7 +77,7 @@ export class abbrSet extends plugin {
     return true
   }
 
-  async setAbbr () {
+  async setAbbr() {
     if (!this.e.msg || this.e.at || this.e.img) {
       await this.reply('设置错误：请发送正确内容')
       return
@@ -118,12 +119,12 @@ export class abbrSet extends plugin {
     await this.reply(`设置别名成功：${ret.join('、')}`)
   }
 
-  save (data) {
+  save(data) {
     data = YAML.stringify(data)
     fs.writeFileSync(this.file, data)
   }
 
-  async delAbbr () {
+  async delAbbr() {
     let role = gsCfg.getRole(this.e.msg, '#|删除|别名|昵称')
 
     if (!role) return false
@@ -145,7 +146,7 @@ export class abbrSet extends plugin {
     await this.reply(`删除${role.name}别名成功：${role.alias}`)
   }
 
-  async abbrList () {
+  async abbrList() {
     let role = gsCfg.getRole(this.e.msg, '#|别名|昵称')
 
     if (!role) return false
@@ -163,46 +164,8 @@ export class abbrSet extends plugin {
 
     let title = `${role.name}别名，${list.length}个`
 
-    msg = await this.makeForwardMsg(Bot.uin, title, msg)
+    msg = await common.makeForwardMsg(e, msg, title)
 
     await this.e.reply(msg)
-  }
-
-  async makeForwardMsg (qq, title, msg) {
-    let nickname = Bot.nickname
-    if (this.e.isGroup) {
-      let info = await Bot.getGroupMemberInfo(this.e.group_id, qq)
-      nickname = info.card ?? info.nickname
-    }
-    let userInfo = {
-      user_id: Bot.uin,
-      nickname
-    }
-
-    let forwardMsg = [
-      {
-        ...userInfo,
-        message: title
-      },
-      {
-        ...userInfo,
-        message: msg
-      }
-    ]
-
-    /** 制作转发内容 */
-    if (this.e.isGroup) {
-      forwardMsg = await this.e.group.makeForwardMsg(forwardMsg)
-    } else {
-      forwardMsg = await this.e.friend.makeForwardMsg(forwardMsg)
-    }
-
-    /** 处理描述 */
-    forwardMsg.data = forwardMsg.data
-      .replace(/\n/g, '')
-      .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
-      .replace(/___+/, `<title color="#777777" size="26">${title}</title>`)
-
-    return forwardMsg
   }
 }

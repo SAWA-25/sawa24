@@ -143,3 +143,4 @@ redis
 yunzai
 /temp/
 .idea
+package-lock.json
