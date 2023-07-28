@@ -254,12 +254,12 @@ export class update extends plugin {
 
     if (log.length <= 0) return ''
 
-    let end = ''
+    let end = `${plugin || 'Yunzai-Bot'}更新日志，共${line}条`
     if (!plugin) {
       end = '更多详细信息，请前往gitee查看\nhttps://gitee.com/yoimiya-kokomi/Yunzai-Bot/edit/main/'
     }
 
-    log = await common.makeForwardMsg(this.e,[log,end],`${plugin || 'Yunzai-Bot'}更新日志，共${line}条`)
+    log = await common.makeForwardMsg(this.e,[log,end],end)
 
     return log
   }
