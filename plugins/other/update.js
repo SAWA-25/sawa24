@@ -27,7 +27,7 @@ export class update extends plugin {
           fnc: 'update'
         },
         {
-          reg: '^#全部更新$',
+          reg: '^#全部(强制)?更新$',
           fnc: 'updateAll',
           permission: 'master'
         }
@@ -80,9 +80,7 @@ export class update extends plugin {
       if (!plugin) return ''
     }
 
-    let path = `./plugins/${plugin}/.git`
-
-    if (!fs.existsSync(path)) return false
+    if (!fs.existsSync(`plugins/${plugin}/.git`)) return false
 
     this.typeName = plugin
     return plugin
@@ -104,11 +102,14 @@ export class update extends plugin {
     let type = '更新'
     if (this.e.msg.includes('强制')) {
       type = '强制更新'
-      cm = `git fetch --all && git reset --hard origin/main && ${cm}`
+      cm = `git reset --hard && git pull --rebase --allow-unrelated-histories`
     }
 
     if (plugin) {
-      cm = `git -C ./plugins/${plugin}/ pull --no-rebase`
+      if (type == '强制更新')
+        cm = `cd "plugins/${plugin}" && git reset --hard && git pull --rebase --allow-unrelated-histories`
+      else
+        cm = `cd "plugins/${plugin}" && git pull --no-rebase`
     }
 
     this.oldCommitId = await this.getcommitId(plugin)
@@ -145,7 +146,7 @@ export class update extends plugin {
   async getcommitId (plugin = '') {
     let cm = 'git rev-parse --short HEAD'
     if (plugin) {
-      cm = `git -C ./plugins/${plugin}/ rev-parse --short HEAD`
+      cm = `cd "plugins/${plugin}" && git rev-parse --short HEAD`
     }
 
     let commitId = await execSync(cm, { encoding: 'utf-8' })
@@ -155,9 +156,9 @@ export class update extends plugin {
   }
 
   async getTime (plugin = '') {
-    let cm = 'git log  -1 --oneline --pretty=format:"%cd" --date=format:"%m-%d %H:%M"'
+    let cm = 'git log -1 --pretty=format:"%cd" --date=format:"%F %T"'
     if (plugin) {
-      cm = `cd ./plugins/${plugin}/ && git log -1 --oneline --pretty=format:"%cd" --date=format:"%m-%d %H:%M"`
+      cm = `cd "plugins/${plugin}" && git log -1 --pretty=format:"%cd" --date=format:"%F %T"`
     }
 
     let time = ''
@@ -225,9 +226,9 @@ export class update extends plugin {
   }
 
   async getLog (plugin = '') {
-    let cm = 'git log  -20 --oneline --pretty=format:"%h||[%cd]  %s" --date=format:"%m-%d %H:%M"'
+    let cm = 'git log -20 --pretty=format:"%h||[%cd] %s" --date=format:"%F %T"'
     if (plugin) {
-      cm = `cd ./plugins/${plugin}/ && ${cm}`
+      cm = `cd "plugins/${plugin}" && ${cm}`
     }
 
     let logAll
@@ -254,59 +255,15 @@ export class update extends plugin {
 
     if (log.length <= 0) return ''
 
-    let end = ''
+    let title = `${plugin || 'Yunzai-Bot'}更新日志，共${line}条`
     if (!plugin) {
-      end = '更多详细信息，请前往gitee查看\nhttps://gitee.com/yoimiya-kokomi/Yunzai-Bot/edit/main/'
+      let end = '更多详细信息，请前往gitee查看\nhttps://gitee.com/yoimiya-kokomi/Yunzai-Bot/edit/main/'
+      log = await common.makeForwardMsg(this.e, [title, log, end], title)
+    }else {
+      log = await common.makeForwardMsg(this.e, [title, log], title)
     }
-
-    log = await this.makeForwardMsg(`${plugin || 'Yunzai-Bot'}更新日志，共${line}条`, log, end)
 
     return log
-  }
-
-  async makeForwardMsg (title, msg, end) {
-    let nickname = Bot.nickname
-    if (this.e.isGroup) {
-      let info = await Bot.getGroupMemberInfo(this.e.group_id, Bot.uin)
-      nickname = info.card ?? info.nickname
-    }
-    let userInfo = {
-      user_id: Bot.uin,
-      nickname
-    }
-
-    let forwardMsg = [
-      {
-        ...userInfo,
-        message: title
-      },
-      {
-        ...userInfo,
-        message: msg
-      }
-    ]
-
-    if (end) {
-      forwardMsg.push({
-        ...userInfo,
-        message: end
-      })
-    }
-
-    /** 制作转发内容 */
-    if (this.e.isGroup) {
-      forwardMsg = await this.e.group.makeForwardMsg(forwardMsg)
-    } else {
-      forwardMsg = await this.e.friend.makeForwardMsg(forwardMsg)
-    }
-
-    /** 处理描述 */
-    forwardMsg.data = forwardMsg.data
-      .replace(/\n/g, '')
-      .replace(/<title color="#777777" size="26">(.+?)<\/title>/g, '___')
-      .replace(/___+/, `<title color="#777777" size="26">${title}</title>`)
-
-    return forwardMsg
   }
 
   async updateLog () {
