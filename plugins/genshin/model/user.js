@@ -120,7 +120,7 @@ export default class User extends base {
       msg += "\n星穹铁道支持：\n功能还在咕咕咕~"
     }
     msg += '\n 支持绑定多个ck'
-    msg = await common.makeForwardMsg(this.e, ['使用命令说明', msg], '绑定成功：使用命令说明')
+    msg = await common.makeForwardMsg(this.e, ['使用命令说明', ...msg], '绑定成功：使用命令说明')
 
     await this.e.reply(msg)
   }

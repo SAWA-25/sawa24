@@ -259,7 +259,7 @@ export class update extends plugin {
       end = '更多详细信息，请前往gitee查看\nhttps://gitee.com/yoimiya-kokomi/Yunzai-Bot/edit/main/'
     }
 
-    log = await common.makeForwardMsg(this.e,[log,end],end)
+    log = await common.makeForwardMsg(this.e,[...log,end],end)
 
     return log
   }
