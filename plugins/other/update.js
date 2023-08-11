@@ -11,7 +11,7 @@ const { exec, execSync } = require('child_process')
 let uping = false
 
 export class update extends plugin {
-  constructor () {
+  constructor() {
     super({
       name: '更新',
       dsc: '#更新 #强制更新',
@@ -37,7 +37,7 @@ export class update extends plugin {
     this.typeName = 'Yunzai-Bot'
   }
 
-  async update () {
+  async update() {
     if (!this.e.isMaster) return false
     if (uping) {
       await this.reply('已有命令更新中..请勿重复操作')
@@ -64,7 +64,7 @@ export class update extends plugin {
     }
   }
 
-  async checkGit () {
+  async checkGit() {
     let ret = await execSync('git --version', { encoding: 'utf-8' })
     if (!ret || !ret.includes('git version')) {
       await this.reply('请先安装git')
@@ -74,7 +74,7 @@ export class update extends plugin {
     return true
   }
 
-  getPlugin (plugin = '') {
+  getPlugin(plugin = '') {
     if (!plugin) {
       plugin = this.e.msg.replace(/#|更新|强制/g, '')
       if (!plugin) return ''
@@ -88,7 +88,7 @@ export class update extends plugin {
     return plugin
   }
 
-  async execSync (cmd) {
+  async execSync(cmd) {
     return new Promise((resolve, reject) => {
       exec(cmd, { windowsHide: true }, (error, stdout, stderr) => {
         resolve({ error, stdout, stderr })
@@ -96,7 +96,7 @@ export class update extends plugin {
     })
   }
 
-  async runUpdate (plugin = '') {
+  async runUpdate(plugin = '') {
     this.isNowUp = false
 
     let cm = 'git pull --no-rebase'
@@ -142,7 +142,7 @@ export class update extends plugin {
     return true
   }
 
-  async getcommitId (plugin = '') {
+  async getcommitId(plugin = '') {
     let cm = 'git rev-parse --short HEAD'
     if (plugin) {
       cm = `git -C ./plugins/${plugin}/ rev-parse --short HEAD`
@@ -154,7 +154,7 @@ export class update extends plugin {
     return commitId
   }
 
-  async getTime (plugin = '') {
+  async getTime(plugin = '') {
     let cm = 'git log  -1 --oneline --pretty=format:"%cd" --date=format:"%m-%d %H:%M"'
     if (plugin) {
       cm = `cd ./plugins/${plugin}/ && git log -1 --oneline --pretty=format:"%cd" --date=format:"%m-%d %H:%M"`
@@ -162,7 +162,7 @@ export class update extends plugin {
 
     let time = ''
     try {
-      time = await execSync(cm, { encoding: 'utf-8' })
+      time = execSync(cm, { encoding: 'utf-8' })
       time = lodash.trim(time)
     } catch (error) {
       logger.error(error.toString())
@@ -172,7 +172,7 @@ export class update extends plugin {
     return time
   }
 
-  async gitErr (err, stdout) {
+  async gitErr(err, stdout) {
     let msg = '更新失败！'
     let errMsg = err.toString()
     stdout = stdout.toString()
@@ -202,7 +202,7 @@ export class update extends plugin {
     await this.reply([errMsg, stdout])
   }
 
-  async updateAll () {
+  async updateAll() {
     let dirs = fs.readdirSync('./plugins/')
 
     await this.runUpdate()
@@ -220,11 +220,11 @@ export class update extends plugin {
     }
   }
 
-  restart () {
+  restart() {
     new Restart(this.e).restart()
   }
 
-  async getLog (plugin = '') {
+  async getLog(plugin = '') {
     let cm = 'git log  -20 --oneline --pretty=format:"%h||[%cd]  %s" --date=format:"%m-%d %H:%M"'
     if (plugin) {
       cm = `cd ./plugins/${plugin}/ && ${cm}`
@@ -232,7 +232,7 @@ export class update extends plugin {
 
     let logAll
     try {
-      logAll = await execSync(cm, { encoding: 'utf-8' })
+      logAll = execSync(cm, { encoding: 'utf-8' })
     } catch (error) {
       logger.error(error.toString())
       this.reply(error.toString())
@@ -259,11 +259,11 @@ export class update extends plugin {
       end = '更多详细信息，请前往gitee查看\nhttps://gitee.com/yoimiya-kokomi/Yunzai-Bot/edit/main/'
     }
 
-    log = await common.makeForwardMsg(this.e,[...log,end],end)
+    log = await common.makeForwardMsg(this.e, [log, end], end)
 
     return log
   }
-  async updateLog () {
+  async updateLog() {
     let log = await this.getLog()
     await this.reply(log)
   }
