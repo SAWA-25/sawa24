@@ -19,7 +19,7 @@ export class update extends plugin {
       priority: 4000,
       rule: [
         {
-          reg: '^#更新日志$',
+          reg: '^#(.*)?更新日志$',
           fnc: 'updateLog'
         },
         {
@@ -254,12 +254,12 @@ export class update extends plugin {
 
     if (log.length <= 0) return ''
 
-    let end = `${plugin || 'Yunzai-Bot'}更新日志，共${line}条`
+    let end = ''
     if (!plugin) {
       end = '更多详细信息，请前往gitee查看\nhttps://gitee.com/yoimiya-kokomi/Yunzai-Bot/edit/main/'
     }
-
-    log = await common.makeForwardMsg(this.e, [log, end], end)
+    let liti = `${plugin || 'Yunzai-Bot'} 更新日志，共${line}条`
+    log = await common.makeForwardMsg(this.e, [liti, log, end], liti)
 
     return log
   }
