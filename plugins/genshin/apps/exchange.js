@@ -1,7 +1,6 @@
 import plugin from '../../../lib/plugins/plugin.js'
 import common from '../../../lib/common/common.js'
 import fetch from 'node-fetch'
-import lodash from 'lodash'
 import MysInfo from '../model/mys/mysInfo.js'
 
 export class exchange extends plugin {
