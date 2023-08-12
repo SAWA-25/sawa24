@@ -709,24 +709,25 @@ export class add extends plugin {
 
     let msg = []
     let num = 0
+
     for (let i in arr) {
       if (num >= page * pageSize) break
 
       let keyWord = await this.keyWordTran(arr[i].key)
       if (!keyWord) continue
-
+      let result = []
       if (Array.isArray(keyWord)) {
-        keyWord.unshift(`${arr[i].num}、`)
+        keyWord.unshift(`${num + 1}、`)
         keyWord.push('\n')
-        keyWord.forEach(v => msg.push(v))
+        result.push(...keyWord)
       } else if (keyWord.type) {
-        msg.push(`\n${arr[i].num}、`, keyWord, '\n\n')
+        result.push(`\n${num + 1}、`, keyWord, '\n\n')
       } else {
-        msg.push(`${arr[i].num}、${keyWord}\n`)
+        result.push(`${num + 1}、${keyWord}\n`)
       }
+      msg.push(result)
       num++
     }
-
     if (type == 'list' && count > 100) {
       msg.push(`更多内容请翻页查看\n如：#表情列表${Number(page) + 1}`)
     }
@@ -736,11 +737,11 @@ export class add extends plugin {
       title = `表情${search}，${count}条`
     }
 
-    let forwardMsg = await common.makeForwardMsg(this.e, msg, title)
+    let forwardMsg = await common.makeForwardMsg(this.e, [title, ...msg], title)
 
     this.e.reply(forwardMsg)
   }
-  
+
   /** 分页 */
   pagination(pageNo, pageSize, array) {
     let offset = (pageNo - 1) * pageSize
