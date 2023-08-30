@@ -74,6 +74,55 @@ export class payLog extends plugin {
     }
   }
 
+  async readSaveData(e){
+    if (!fs.readdirSync(this.dirPath, 'utf-8').includes(e.user_id + '.yaml')) {
+      // 如果没有则判断是否已经缓存了authkey，这个主要针对使用抽卡链接的，和苹果用户
+      return null
+    }
+
+    // 如果有就判断用户的主分支uid是什么
+    const mainUid = await this.isMain(e.user_id)
+
+    // 再读取现有数据
+    let data = fs.readFileSync(this.dirPath + `/${e.user_id}.yaml`, 'utf-8')
+    data = yaml.parse(data)
+
+    // 如果用户没有绑定ck，就直接发送保存的数据
+    if (!mainUid) {
+      let key = Object.keys(data)
+      return data[key[0]]
+    }
+
+    // 判断已有数据里是否有该uid的数据
+    if (data[mainUid]) {
+      // 如果有该uid的数据，就发送
+      return data[mainUid]
+    } else {
+      // 没有就获取
+      return null
+    }
+  }
+
+  combineOldAndNew(oldData, newData){
+    if(oldData === null){
+      return newData
+    }
+
+    //旧数据最后一个月的数据可能不是最新，但倒数第二个月一定尘埃落定
+    oldData.monthData.pop()
+    let oldLastMonth = oldData.monthData.at(-1).month
+
+    while(newData.monthData.length>1 && newData.monthData[0].month!==oldLastMonth){
+      newData.monthData.shift()
+    }
+    //对应于旧数据完全正确的那个月是要被移除的，这里是补充上面代码欠缺的逻辑
+    newData.monthData.shift()
+
+    oldData.monthData.push(...newData.monthData)
+
+    return oldData
+  }
+
   // 获取authKey
   async getAuthKey () {
     // 判断是否为群聊发送
@@ -97,7 +146,9 @@ export class payLog extends plugin {
     // 获取数据
     this.reply('正在获取消费数据,可能需要30s~~')
     let data = new PayData(this.authKey)
-    let imgData = await data.filtrateData()
+    let oldData = await this.readSaveData(this.e)
+    let newData = await data.filtrateData()
+    let imgData = this.combineOldAndNew(oldData, newData)
     if (imgData?.errorMsg) {
       this.reply(imgData?.errorMsg)
       return true
@@ -126,7 +177,9 @@ export class payLog extends plugin {
       this.authKey = await redis.get(`Yz:genshin:payLog:${uid}`) || await redis.get(`Yz:genshin:gachaLog:url:${uid}`)
       if (this.authKey) {
         this.reply('正在获取数据,可能需要30s')
-        let imgData = await new PayData(this.authKey).filtrateData()
+        let oldData = await this.readSaveData(this.e)
+        let newData = await new PayData(this.authKey).filtrateData()
+        let imgData = this.combineOldAndNew(oldData, newData)
         if (imgData?.errorMsg) {
           this.reply(imgData.errorMsg)
         } else {
