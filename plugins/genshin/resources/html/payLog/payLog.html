@@ -60,15 +60,16 @@
 
 <script>
   const barData = JSON.parse(`{{@ barData}}`);
-  var myChart1 = echarts.init(document.querySelector('#chartContainer'), null, { renderer: 'svg' });
   const xData = barData.map(v => v.type)
+  document.getElementById("chartContainer").style.height = 120 + 20*xData.length + "px";
   const yData = barData.map(v => v.sales)
+  var myChart1 = echarts.init(document.querySelector('#chartContainer'), null, { renderer: 'svg' });
+  myChart1.resize()
   // 指定图表的配置项和数据
   const option = {
     animation: false,
     xAxis: {
-      type: 'category',
-      data: xData
+      type: 'value'
     },
     legend: {
       x:'left',
@@ -77,7 +78,9 @@
       data: [{ name: '金额' }]
     },
     yAxis: {
-      type: 'value'
+      type: 'category',
+      data: xData,
+      inverse: true
     },
     series: [
       {
@@ -87,7 +90,7 @@
         itemStyle: {
           normal: {
             label: {
-              position: 'top',
+              position: 'right',
               show: true,
               textStyle: {
                 color: '#1e1f20',

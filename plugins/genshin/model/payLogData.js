@@ -124,19 +124,15 @@ export class PayData {
       let num = Number(this.#oringinData[index].add_num)
       if (num < 0) continue
       // 获取月份
-      // let thisMonth = ++moment(this.#oringinData[index].time).toArray()[1]
-      // 新接口改名为：datetime
+      // console.log("日期？", moment(this.#oringinData[index].time).toArray())
       let thisMonth = ++moment(this.#oringinData[index].datetime).toArray()[1]
-      if (thisMonth !== month) {
+      let thisYear = moment(this.#oringinData[index].datetime).toArray()[0]
+      let nowDate = (thisYear - 2000) + "-" + (thisMonth < 10 ? "0" + thisMonth : thisMonth)
+      if (nowDate !== month) {
         i++
-        month = thisMonth
+        month = nowDate
         list[listIndex++] = {
-          month: thisMonth + '月',
-          payNum: [0, 0, 0, 0, 0, 0, 0, 0]
-        }
-      } else if (!i) {
-        list[i] = {
-          month: thisMonth + '月',
+          month: nowDate,
           payNum: [0, 0, 0, 0, 0, 0, 0, 0]
         }
       }
